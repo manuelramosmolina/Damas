@@ -1,4 +1,4 @@
-package org.iesalandalus.programacion.damas.Modelo;
+package org.iesalandalus.programacion.damas.modelo;
 
 public enum Direccion {
 
@@ -12,7 +12,6 @@ public enum Direccion {
 
     @Override
     public String toString() {
-        return ordinal() + ".-" + cadenaAMostrar;
+        return cadenaAMostrar;
     }
-
 }
