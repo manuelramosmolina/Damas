@@ -5,8 +5,6 @@ import org.iesalandalus.programacion.damas.modelo.Color;
 import org.iesalandalus.programacion.damas.modelo.Direccion;
 import org.iesalandalus.programacion.damas.modelo.Dama;
 
-import static org.iesalandalus.programacion.damas.Consola.despedirse;
-
 public class MainApp {
 
     private static Dama dama;
@@ -16,15 +14,18 @@ public class MainApp {
         switch (opcion) {
             case 1:
                 crearDamaDefecto();
+                mostrarDama();
                 break;
             case 2:
                 crearDamaColor();
+                mostrarDama();
                 break;
             case 3:
                 mover();
+                mostrarDama();
                 break;
             case 4:
-                despedirse();
+                Consola.despedirse();
                 break;
             default:
                 System.out.println("ERROR: Opción NO válida.");
@@ -43,7 +44,6 @@ public class MainApp {
     }
 
     private static void mover() {
-
         try {
             if (dama == null) {
                 System.out.println("ERROR: Debes crear una dama.");
@@ -55,8 +55,8 @@ public class MainApp {
             if (dama.isEsDamaEspecial()) {
                 pasos = Consola.elegirPasos();
             }
-                dama.mover(direccion, pasos);
-                System.out.println("Dama movida correctamente a la nueva posición: " + dama);
+            dama.mover(direccion, pasos);
+            System.out.println("Dama movida correctamente a la nueva posición: " + dama);
         } catch (IllegalArgumentException | NullPointerException | OperationNotSupportedException e) {
             System.out.println(e.getMessage());
         }
@@ -71,15 +71,11 @@ public class MainApp {
     }
 
     public static void main(String[] args) {
-
         int opcion;
         do {
             Consola.mostrarMenu();
             opcion = Consola.elegirOpcionMenu();
             ejecutarOpcion(opcion);
         } while (opcion != 4);
-        despedirse();
     }
-	
-	
 }

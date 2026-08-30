@@ -28,74 +28,42 @@ public class Dama {
     }
 
     private void setColor(Color color) {
-        if (color == null)
+        if (color == null) {
             throw new NullPointerException("ERROR: El color no puede ser nulo.");
+        }
         this.color = color;
     }
 
-    public Posicion getPosicion(){
-        return posicion;
+    public Posicion getPosicion() {
+        return new Posicion(posicion);
     }
 
     public void setPosicion(Posicion posicion) {
-        if (posicion == null)
-            throw new NullPointerException("ERROR: La Posición no puede ser nula.");
-        this.posicion = posicion;
+        if (posicion == null) {
+            throw new NullPointerException("ERROR: La posición no puede ser nula.");
+        }
+        this.posicion = new Posicion(posicion);
     }
 
     public boolean isEsDamaEspecial() {
         return esDamaEspecial;
     }
 
-    public void setEsDamaEspecial(boolean esDamaEspecial) throws OperationNotSupportedException {
-        if (this.esDamaEspecial != esDamaEspecial)
-            throw new OperationNotSupportedException("ERROR: NO es dama especial. ");
-
-    }
-
 
     private Posicion crearPosicionInicial(Color color) {
-        int fila = 0;
-        char columna;
-        do {
-            if (color.equals(Color.BLANCO))
-                fila = (int) (Math.random() * 3) + 1;
-        } while (fila > 3);
-        do {
-            if (color.equals(Color.NEGRO))
-                fila = (int) (Math.random() * 3) + 6;
-        } while (fila > 8);
-
-        int columnaNumero = (int) (Math.random() * 4) * 2 + 1;
-        if (fila % 2 == 0) {
-            columnaNumero -= 1;
+        int fila;
+        if (color == Color.BLANCO) {
+            fila = (int) (Math.random() * 3) + 1;
+        } else {
+            fila = (int) (Math.random() * 3) + 6;
         }
 
-        switch (columnaNumero) {
-
-            case 1:
-                columna = 'a';
-                break;
-            case 2:
-                columna = 'b';
-                break;
-            case 3:
-                columna = 'c';
-                break;
-            case 4:
-                columna = 'd';
-                break;
-            case 5:
-                columna = 'e';
-                break;
-            case 6:
-                columna = 'f';
-                break;
-            case 7:
-                columna = 'g';
-                break;
-            default:
-                columna = 'h';
+        int offset = (int) (Math.random() * 4) * 2;
+        char columna;
+        if (fila % 2 != 0) {
+            columna = (char) ('a' + offset);
+        } else {
+            columna = (char) ('b' + offset);
         }
 
         return new Posicion(fila, columna);
@@ -115,10 +83,13 @@ public class Dama {
 
         if (!esDamaEspecial) {
             if (color.equals(Color.BLANCO) && (direccion != Direccion.NORESTE && direccion != Direccion.NOROESTE)) {
-                throw new OperationNotSupportedException("ERROR: La dama NO puede retroceder.");
+                throw new OperationNotSupportedException("ERROR: Movimiento no permitido.");
             }
             if (color.equals(Color.NEGRO) && (direccion != Direccion.SURESTE && direccion != Direccion.SUROESTE)) {
-                throw new OperationNotSupportedException("ERROR: La dama NO puede retroceder.");
+                throw new OperationNotSupportedException("ERROR: Movimiento no permitido.");
+            }
+            if (pasos > 1) {
+                throw new OperationNotSupportedException("ERROR: Las damas normales solo se pueden mover 1 casilla.");
             }
         }
 
@@ -131,23 +102,28 @@ public class Dama {
                 nuevaColumna += (char) pasos;
                 break;
             case NOROESTE:
-                nuevaFila -= pasos;
-                nuevaColumna += (char) pasos;
-                break;
-            case SURESTE:
-                nuevaFila -= pasos;
-                nuevaColumna -= (char) pasos;
-                break;
-            case SUROESTE:
                 nuevaFila += pasos;
                 nuevaColumna -= (char) pasos;
                 break;
+            case SURESTE:
+                nuevaFila -= pasos;
+                nuevaColumna += (char) pasos;
+                break;
+            case SUROESTE:
+                nuevaFila -= pasos;
+                nuevaColumna -= (char) pasos;
+                break;
+        }
+
+        if (nuevaFila < 1 || nuevaFila > 8 || nuevaColumna < 'a' || nuevaColumna > 'h') {
+            throw new OperationNotSupportedException("ERROR: Movimiento no permitido.");
         }
 
         if ((color == Color.BLANCO && nuevaFila == 8) || (color == Color.NEGRO && nuevaFila == 1)) {
             this.esDamaEspecial = true;
         }
 
+        this.posicion = new Posicion(nuevaFila, nuevaColumna);
     }
 
     @Override
